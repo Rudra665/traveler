@@ -468,7 +468,7 @@
 
   function handleClientLoad() {
     gapi.load('client:auth2', initClient);
-		console("hello2")
+		console.log("hello2")
 
   }
 
@@ -479,7 +479,7 @@
       discoveryDocs: DISCOVERY_DOCS,
       scope: SCOPES
     }).then(function () {
-		console("hello4")
+		console.log("hello4")
 
 		// Listen for sign-in state changes.
       gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
@@ -511,11 +511,11 @@
     if (gapi.auth2 && gapi.auth2.getAuthInstance()) {
       // Check if the user is already signed in
       if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
-		console("hello1")
+		console.log("hello1")
         addDataToSheet();
       } else {
         // If not signed in, initiate the sign-in process
-		console("hello12")
+		console.log("hello12")
 
         gapi.auth2.getAuthInstance().signIn().then(function () {
           addDataToSheet();
