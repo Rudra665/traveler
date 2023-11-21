@@ -51,6 +51,8 @@
 
 	<!-- Modernizr JS -->
 	<script src="js/modernizr-2.6.2.min.js"></script>
+	<script src="https://apis.google.com/js/api.js"></script>
+
 	<!-- FOR IE9 below -->
 	<!--[if lt IE 9]>
 	<script src="js/respond.min.js"></script>
@@ -103,7 +105,7 @@
 									<div class="tab-content">
         <div class="tab-content-inner active" data-content="signup">
             <h3>Book Your Trip</h3>
-            <form id="emailForm">
+            <form id="leadForm">
                 <div class="row form-group">
                     <div class="col-md-12">
                         <label for="fullname">Your Name</label>
@@ -124,7 +126,7 @@
                 </div>
                 <div class="row form-group">
                     <div class="col-md-12">
-                        <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                        <input type="button" onclick="handleClientLoad()" class="btn btn-primary btn-block" value="Submit"></input>
                     </div>
                 </div>
             </form>
@@ -431,6 +433,8 @@
 	
 	<!-- jQuery -->
 	<script src="js/jquery.min.js"></script>
+
+
 	<!-- jQuery Easing -->
 	<script src="js/jquery.easing.1.3.js"></script>
 	<!-- Bootstrap -->
@@ -452,40 +456,106 @@
 	<!-- Datepicker -->
 	<script src="js/bootstrap-datepicker.min.js"></script>
 	<script>
-		document.getElementById('emailForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent form submission
+  // Client ID and API key from the Developer Console
+  const CLIENT_ID = '113663279439083294936';
+  const API_KEY = 'AIzaSyBfCxIsZ5E3gE69kCZ9NR1cLZvtggsYgG8';
 
-            // Get the form data
-            var mobile = document.getElementById('mobile').value;
-            var name = document.getElementById('fullname').value;
-            var date = document.getElementById('date-start').value;
-            var type = "Booking Query";
+  // Array of API discovery doc URLs for APIs used by the application
+  const DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4"];
 
-            // Create the JSON data
-            var jsonData = {
-                mobile: mobile,
-                name: name,
-                date: date,
-                type: type
-            };
+  // Authorization scopes required by the API
+  const SCOPES = "https://www.googleapis.com/auth/spreadsheets";
 
-            // Send JSON data to the server
-            fetch('http://localhost:5501/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(jsonData)
-            })
-            .then(function(response) {
-                return response.text();
-            })
-            .catch(function(error) {
-                console.error('Error:', error);
-            });
+  function handleClientLoad() {
+    gapi.load('client:auth2', initClient);
+		console("hello2")
+
+  }
+
+  function initClient() {
+    gapi.client.init({
+      apiKey: API_KEY,
+      clientId: CLIENT_ID,
+      discoveryDocs: DISCOVERY_DOCS,
+      scope: SCOPES
+    }).then(function () {
+		console("hello4")
+
+		// Listen for sign-in state changes.
+      gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+
+      // Check if the user is already signed in
+      if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
+        addDataToSheet();
+      } else {
+        // If not signed in, initiate the sign-in process
+        gapi.auth2.getAuthInstance().signIn().then(function () {
+          addDataToSheet();
         });
+      }
+    });
+  }
 
-	</script>
+  function updateSigninStatus(isSignedIn) {
+    if (isSignedIn) {
+      // User is signed in
+      console.log('User is signed in');
+    } else {
+      // User is signed out
+      console.log('User is signed out');
+    }
+  }
+
+  function authorizeAndAddData() {
+    // Check if the authentication instance is ready
+    if (gapi.auth2 && gapi.auth2.getAuthInstance()) {
+      // Check if the user is already signed in
+      if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
+		console("hello1")
+        addDataToSheet();
+      } else {
+        // If not signed in, initiate the sign-in process
+		console("hello12")
+
+        gapi.auth2.getAuthInstance().signIn().then(function () {
+          addDataToSheet();
+        });
+      }
+    } else {
+      console.error('Authentication instance not ready');
+    }
+  }
+
+  function addDataToSheet() {
+    // Spreadsheet ID and range
+    const SPREADSHEET_ID = '1bsNjjIAyG7mT3n9ia7P00GrjNg5I7iq4k3D_36qAT5E';
+    const RANGE = 'Sheet1';  // Change to the name of your sheet or range
+
+    // Data to be added
+    const data = [
+      ['John', 'Doe', 'john.doe@example.com'],
+      ['Jane', 'Doe', 'jane.doe@example.com']
+    ];
+
+    // Call the Sheets API to append the data
+    gapi.client.sheets.spreadsheets.values.append({
+      spreadsheetId: SPREADSHEET_ID,
+      range: RANGE,
+      valueInputOption: 'USER_ENTERED',
+      resource: {
+        values: data
+      }
+    }).then((response) => {
+      console.log('Data added successfully:', response);
+    }, (error) => {
+      console.error('Error adding data:', error);
+    });
+  }
+
+</script>
+
+<script async defer src="https://apis.google.com/js/api.js" onload="this.onload=handleClientLoad;this.onreadystatechange=function(){if(this.readyState==='complete')this.onload()}"></script>
+
 
 	<!-- Main -->
 	<script src="js/main.js"></script>
