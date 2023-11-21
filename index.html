@@ -101,55 +101,35 @@
 								<div class="tab">
 									
 									<div class="tab-content">
-										<div class="tab-content-inner active" data-content="signup">
-											<h3>Book Your Trip</h3>
-											<form action="#">
-												<div class="row form-group">
-													<div class="col-md-12">
-														<label for="fullname">Your Name</label>
-														<input type="text" id="fullname" class="form-control">
-													</div>
-												</div>
-												<div class="row form-group">
-													<div class="col-md-12">
-														<label for="activities">Activities</label>
-														<select name="#" id="activities" class="form-control">
-															<option value="">Activities</option>
-															<option value="">Hiking</option>
-															<option value="">Caving</option>
-															<option value="">Swimming</option>
-														</select>
-													</div>
-												</div>
-												<div class="row form-group">
-													<div class="col-md-12">
-														<label for="destination">Adventure</label>
-														<select name="#" id="destination" class="form-control">
-															<option value="">Philippines</option>
-															<option value="">USA</option>
-															<option value="">Australia</option>
-															<option value="">Singapore</option>
-														</select>
-													</div>
-												</div>
-												
-												<div class="row form-group">
-													<div class="col-md-12">
-														<label for="date-start">Date Adventure</label>
-														<input type="text" id="date-start" class="form-control">
-													</div>
-												</div>
-
-												<div class="row form-group">
-													<div class="col-md-12">
-														<input type="submit" class="btn btn-primary btn-block" value="Submit">
-													</div>
-												</div>
-											</form>	
-										</div>
-
-										
-									</div>
+        <div class="tab-content-inner active" data-content="signup">
+            <h3>Book Your Trip</h3>
+            <form id="emailForm">
+                <div class="row form-group">
+                    <div class="col-md-12">
+                        <label for="fullname">Your Name</label>
+                        <input type="text" id="fullname" class="form-control">
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-12">
+                        <label for="mobile">Mobile No.</label>
+                        <input type="text" id="mobile" class="form-control">
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-12">
+                        <label for="date-start">Date Adventure</label>
+                        <input type="text" id="date-start" class="form-control">
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 								</div>
 							</div>
 						</div>
@@ -471,7 +451,44 @@
 	
 	<!-- Datepicker -->
 	<script src="js/bootstrap-datepicker.min.js"></script>
-	
+	<script>
+		document.getElementById('emailForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            // Get the form data
+            var mobile = document.getElementById('mobile').value;
+            var name = document.getElementById('fullname').value;
+            var date = document.getElementById('date-start').value;
+            var type = "Booking Query";
+
+            // Create the JSON data
+            var jsonData = {
+                mobile: mobile,
+                name: name,
+                date: date,
+                type: type
+            };
+
+            // Send JSON data to the server
+            fetch('http://localhost:5500/send-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(jsonData)
+            })
+            .then(function(response) {
+                return response.text();
+            })
+            .then(function(message) {
+                alert(message);
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+            });
+        });
+
+	</script>
 
 	<!-- Main -->
 	<script src="js/main.js"></script>
