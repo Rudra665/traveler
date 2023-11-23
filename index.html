@@ -104,28 +104,28 @@
 									<div class="tab-content">
         <div class="tab-content-inner active" data-content="signup">
             <h3>Book Your Trip</h3>
-            <form id="leadForm">
+            <form action="https://sheetdb.io/api/v1/rud34361rlawt" id="leadForm" method="post">
                 <div class="row form-group">
                     <div class="col-md-12">
                         <label for="fullname">Your Name</label>
-                        <input type="text" id="fullname" class="form-control">
+                        <input type="text" id="fullname" class="form-control" name="data[fullname]">
                     </div>
                 </div>
                 <div class="row form-group">
                     <div class="col-md-12">
                         <label for="mobile">Mobile No.</label>
-                        <input type="text" id="mobile" class="form-control">
+                        <input type="number" id="mobile" class="form-control" name="data[mobile]">
                     </div>
                 </div>
                 <div class="row form-group">
                     <div class="col-md-12">
                         <label for="date-start">Date Adventure</label>
-                        <input type="text" id="date-start" class="form-control">
+                        <input type="text" id="date-start" class="form-control" name="data[date-start]">
                     </div>
                 </div>
                 <div class="row form-group">
                     <div class="col-md-12">
-                        <input type="button" onclick="handleClientLoad()" class="btn btn-primary btn-block" value="Submit"></input>
+                        <button type="submit" class="btn btn-primary btn-block" >Submit</button>
                     </div>
                 </div>
             </form>
@@ -455,113 +455,21 @@
 	<!-- Datepicker -->
 	<script src="js/bootstrap-datepicker.min.js"></script>
 
-	<script src="https://apis.google.com/js/api.js"></script>
-
-
-	<script>
-  // Client ID and API key from the Developer Console
-  const CLIENT_ID = '434549411079-1aea0ibvailkrbm4s5g7otmka1tr828k.apps.googleusercontent.com';
-  const API_KEY = 'AIzaSyBZEqr-btFABRvEJ4mDuGtH0VBqddGJ2wc';
-
-  // Array of API discovery doc URLs for APIs used by the application
-  const DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4"];
-
-  // Authorization scopes required by the API
-  const SCOPES = "https://www.googleapis.com/auth/spreadsheets";
-
-function handleClientLoad() {
-    gapi.load('client:auth2', initClient);
-	console.log("initClient");
-}
-
-  function initClient() {
-	console.log("initClient");
-    gapi.client.init({
-      apiKey: API_KEY,
-      clientId: CLIENT_ID,
-      discoveryDocs: DISCOVERY_DOCS,
-      scope: SCOPES
-    }).then(function () {
-		console.log("hello4")
-
-		// Listen for sign-in state changes.
-      gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
-
-      // Check if the user is already signed in
-      if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
-        addDataToSheet();
-      } else {
-        // If not signed in, initiate the sign-in process
-        gapi.auth2.getAuthInstance().signIn().then(function () {
-          addDataToSheet();
-        });
-      }
-    });
-  }
-
-  function updateSigninStatus(isSignedIn) {
-    if (isSignedIn) {
-      // User is signed in
-      console.log('User is signed in');
-    } else {
-      // User is signed out
-      console.log('User is signed out');
-    }
-  }
-
-  function authorizeAndAddData() {
-    // Check if the authentication instance is ready
-    if (gapi.auth2 && gapi.auth2.getAuthInstance()) {
-      // Check if the user is already signed in
-      if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
-		console.log("hello1")
-        addDataToSheet();
-      } else {
-        // If not signed in, initiate the sign-in process
-		console.log("hello12")
-
-        gapi.auth2.getAuthInstance().signIn().then(function () {
-          addDataToSheet();
-        });
-      }
-    } else {
-      console.error('Authentication instance not ready');
-    }
-  }
-
-  function addDataToSheet() {
-    // Spreadsheet ID and range
-    const SPREADSHEET_ID = '1bsNjjIAyG7mT3n9ia7P00GrjNg5I7iq4k3D_36qAT5E';
-    const RANGE = 'Sheet1';  // Change to the name of your sheet or range
-
-    // Data to be added
-    const data = [
-      ['John', 'Doe', 'john.doe@example.com'],
-      ['Jane', 'Doe', 'jane.doe@example.com']
-    ];
-
-    // Call the Sheets API to append the data
-    gapi.client.sheets.spreadsheets.values.append({
-      spreadsheetId: SPREADSHEET_ID,
-      range: RANGE,
-      valueInputOption: 'USER_ENTERED',
-      resource: {
-        values: data
-      }
-    }).then((response) => {
-      console.log('Data added successfully:', response);
-    }, (error) => {
-      console.error('Error adding data:', error);
-    });
-  }
-
-</script>
-
-<script async defer src="https://apis.google.com/js/api.js" onload="this.onload=handleClientLoad;this.onreadystatechange=function(){if(this.readyState==='complete')this.onload()}"></script>
-
-
 	<!-- Main -->
 	<script src="js/main.js"></script>
+
+	<script>
+		var form = document.getElementById('leadForm');
+		form.addEventListener("submit", e=>{
+			e.preventDefault();
+			fetch(form.action, {
+				method: "POST",
+				body:new FormData(document.getElementById('leadForm')),
+			}).then(
+				response => response.json()
+			);
+		});
+	</script>
 
 	</body>
 </html>
